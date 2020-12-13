@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
   runApp(InheritedWidgetApp());
@@ -21,23 +22,29 @@ class InheritedWidgetPage extends StatefulWidget {
 }
 
 class _InheritedWidgetPageState extends State<InheritedWidgetPage> {
+  var age = new ChangeAge(age: 55);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'The Family Tree',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+    return ChangingAge(
+      age: age,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'The Family Tree',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+          ),
         ),
-      ),
-      body: GrandParent(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add your onPressed code here!
-          setState(() {});
-        },
-        child: Icon(Icons.navigation),
-        backgroundColor: Colors.green,
+        body: GrandParent(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+            setState(() {
+              age.changeAge();
+            });
+          },
+          child: Icon(Icons.adb),
+          backgroundColor: Colors.green,
+        ),
       ),
     );
   }
@@ -68,7 +75,7 @@ Widget _childrenList() => ListView(
       ],
     );
 
-class FatherClass extends StatelessWidget {
+class FatherClass extends GrandParent {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -78,10 +85,11 @@ class FatherClass extends StatelessWidget {
           margin: EdgeInsets.all(10.0),
           padding: EdgeInsets.all(10.0),
           child: Text(
-            'Father has one child. He has blue eyes.',
+            'Father has one child and he was born with blue eyes. However ' +
+                'you can change his age by clicking the add button below.',
             style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 35.0,
+                fontSize: 20.0,
                 color: Colors.blue),
           ),
         ),
@@ -91,7 +99,7 @@ class FatherClass extends StatelessWidget {
   }
 }
 
-class UncleClass extends StatelessWidget {
+class UncleClass extends GrandParent {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -107,38 +115,39 @@ class UncleClass extends StatelessWidget {
   }
 }
 
-class IAmTheOnlyChildOfMyFather extends StatefulWidget {
-  @override
-  _IAmTheOnlyChildOfMyFatherState createState() =>
-      _IAmTheOnlyChildOfMyFatherState();
-}
-
-class _IAmTheOnlyChildOfMyFatherState extends State<IAmTheOnlyChildOfMyFather> {
+class IAmTheOnlyChildOfMyFather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    ChangeAge myAge = ChangingAge.of(context).age;
     return Container(
       margin: EdgeInsets.all(10.0),
       padding: EdgeInsets.all(10.0),
-      child: EyeColor(
-        color: Colors.green,
-        child: Builder(
-          builder: (BuildContext innerContext) {
-            return Column(
-              children: [
-                Text(
-                  'I am the only child of my parents and I have green eyes like a Frog.',
-                  style: TextStyle(
-                      color: EyeColor.of(innerContext).color,
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-              ],
-            );
-          },
-        ),
+      child: Column(
+        children: [
+          EyeColor(
+            color: Colors.green,
+            child: Builder(
+              builder: (BuildContext innerContext) {
+                return Column(
+                  children: [
+                    Text(
+                      'I am the only child of my parents of age ' +
+                          '${myAge.age}' +
+                          ' I have green eyes like a Frog. Click the below button and raise my age.',
+                      style: TextStyle(
+                          color: EyeColor.of(innerContext).color,
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -161,4 +170,30 @@ class EyeColor extends InheritedWidget {
 
   @override
   bool updateShouldNotify(EyeColor old) => color != old.color;
+}
+
+class ChangingAge extends InheritedWidget {
+  const ChangingAge({
+    Key key,
+    @required this.age,
+    @required Widget child,
+  })  : assert(age != null),
+        super(key: key, child: child);
+
+  final ChangeAge age;
+
+  static ChangingAge of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ChangingAge>();
+  }
+
+  @override
+  bool updateShouldNotify(ChangingAge old) => age != old.age;
+}
+
+class ChangeAge {
+  int age;
+  ChangeAge({this.age});
+  void changeAge() {
+    age += 5;
+  }
 }
