@@ -128,14 +128,16 @@ class IAmTheOnlyChildOfMyFather extends StatelessWidget {
             color: Colors.green,
             child: Builder(
               builder: (BuildContext innerContext) {
+                Color eyeColor = EyeColor.of(innerContext).color;
                 return Column(
                   children: [
                     Text(
                       'I am the only child of my parents of age ' +
                           '${myAge.age}' +
-                          ' I have green eyes like a Frog. Click the below button and raise my age.',
+                          ' I have green eyes like a Frog. So the text is green.' +
+                          ' Click the button to raise my age.',
                       style: TextStyle(
-                          color: EyeColor.of(innerContext).color,
+                          color: eyeColor,
                           fontSize: 25.0,
                           fontWeight: FontWeight.bold),
                     ),
