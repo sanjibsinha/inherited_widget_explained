@@ -1,6 +1,6 @@
 # inherited_widget_explained
 
-A new Flutter project.
+A new Flutter project on InheritedWidget. I try to explain it as simply as possible.
 
 ## Getting Started
 
